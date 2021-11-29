@@ -155,10 +155,8 @@ class Bone:
             
             self.save_json(json_result, save_options)
         except Exception as ex:
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            file_name = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            logger.warn(f"{exc_type}, {file_name}, {exc_tb.tb_lineno}, {exc_obj}, {ex}")
-    
+            logger_exception(ex)
+        
     def inner_point(self, background, inner, options):
         padding_width = options["padding_width"]
         padding_height = options["padding_height"]

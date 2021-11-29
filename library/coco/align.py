@@ -187,7 +187,7 @@ class Reside(Bone):
 
                     self.save_image(data,save_image_path,name)
                     image_idx += 1
-            # print(image_idx , len(json_result["images"]), len(json_result["annotations"]))
+            
             save_options = {
                 "load_path":save_json_path,
                 "file_name":json_file
