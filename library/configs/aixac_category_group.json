@@ -1,0 +1,27 @@
+{
+    "group_list": [
+        {
+            "class": "knife_unfolded",
+            "value": [
+                "knife",
+                "chefknife",
+                "fruitknife",
+                "jackknife",
+                "officeutilityknife",
+                "artknife",
+                "steakknife",
+                "swissarmyknife",
+                "breadknife"
+            ]
+        },
+        {
+            "class": "toygun_pistol",
+            "value": [
+                "gun",
+                "gasgun",
+                "toygun",
+                "frame"
+            ]
+        }
+    ]
+}

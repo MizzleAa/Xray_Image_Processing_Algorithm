@@ -1,0 +1,90 @@
+{
+    "group_list": [
+        {
+            "class": "knife",
+            "value": [
+                "knife",
+                "chefknife",
+                "fruitknife",
+                "jackknife",
+                "officeutilityknife",
+                "artknife",
+                "steakknife",
+                "swissarmyknife",
+                "breadknife"
+            ]
+        },
+        {
+            "class": "bettery",
+            "value": [
+                "bettery"
+            ]
+        },
+        {
+            "class": "container",
+            "value": [
+                "butanegas",
+                "gasspray",
+                "hairspray",
+                "lighterfluidcan",
+                "lighterfluidplastic",
+                "spray",
+                "tumblermetal",
+                "waterplastic"
+            ]
+        },
+        {
+            "class": "lighter",
+            "value": [
+                "disposablelighter",
+                "torchlighter"
+            ]
+        },
+        {
+            "class": "gun",
+            "value": [
+                "gun",
+                "gasgun",
+                "toygun",
+                "frame"
+            ]
+        },
+        {
+            "class": "gasgun",
+            "value": [
+                "gasgun"
+            ]
+        },
+        {
+            "class": "gun_magazine",
+            "value": [
+                "magazine"
+            ]
+        },
+        {
+            "class": "laserpointer",
+            "value": [
+                "laserpointer"
+            ]
+        },
+        {
+            "class": "bag",
+            "value": [
+                "bag"
+            ]
+        },
+        {
+            "class": "phone",
+            "value": [
+                "phone",
+                "tablet"
+            ]
+        },
+        {
+            "class": "notebook",
+            "value": [
+                "notebook"
+            ]
+        }
+    ]
+}
