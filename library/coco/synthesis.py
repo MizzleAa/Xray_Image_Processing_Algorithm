@@ -70,9 +70,13 @@ def multi_synthesis_image_annotation():
     coco = MultiSynthesis()
     names = ["data"]
 
-    origin_path = "F://custom/_seperation_/reside_remove_2"
-    save_path = "F://custom/_seperation_/multi_synthesis_20211127_1"
+    origin_path = "F://custom/_others_/crop"
+    save_path = "F://custom/_others_/multi_synthesis"
     background_path = "E://daq/_background_/null/none"
+
+    # origin_path = "F://custom/_seperation_/reside_remove_3"
+    # save_path = "F://custom/_seperation_/multi_synthesis_20211130_1"
+    # background_path = "E://daq/_background_/null/none"
 
     # origin_path = "F://ct/_train_/rotate"
     # save_path = "F://ct/_train_/multi_synthesis"

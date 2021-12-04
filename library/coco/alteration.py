@@ -19,7 +19,7 @@ def append_grouping():
     grouping = AppendGrouping()
 
     # folder = "synthesis"
-    folder = "multi_synthesis_20211127_1"
+    folder = "multi_synthesis_20211130_2"
     
     origin_path = f"F://custom/_seperation_/{folder}"
     save_path = f"F://custom/_seperation_/append_{folder}"
@@ -326,9 +326,6 @@ def change_category_name():
             ground_truth_view(ground_truth_options)
 
 
-
-
-
 @dec_func_start_end
 def change_category_id():
     """ChangeCategoryID 클레스 사용 예제
@@ -345,7 +342,7 @@ def change_category_id():
     save_path = f"F://custom/_seperation_/change_id_{folder}"
 
     group_json_path = f"E://aixac/_json_"
-    group_json_name = f"category_id_list.json"
+    group_json_name = f"20211130_category_id_list.json"
 
     make_dir(save_path,{"is_remove":True})
     change_category_id_list = load_json(group_json_path,group_json_name)

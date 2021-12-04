@@ -20,8 +20,18 @@ def crop_image_annotation():
     coco = Crop()
     names = ["data"]
 
-    origin_path = "F://custom/_seperation_/__reside"
-    save_path = "F://custom/_seperation_/__crop"
+    origin_path = "F://ct/_train_/rate"
+    save_path = "F://ct/_train_/crop"
+
+    
+    # origin_path = "F://custom/_others_/background_fix"
+    # save_path = "F://custom/_others_/crop"
+
+    # origin_path = "F://custom/_seperation_/20211129_gray_to_resider"
+    # save_path = "F://custom/_seperation_/20211129_resider_to_crop"
+    
+    # origin_path = "F://custom/_seperation_/__reside"
+    # save_path = "F://custom/_seperation_/__crop"
 
     # origin_path = "F://daq/_train_/origin"
     # save_path = "F://daq/_train_/crop"
@@ -182,6 +192,7 @@ class Crop(Bone):
                         crop_data = crop_rectangle(data, crop_options)
                         #
                         name = f"{image_idx}.png"
+                        
                         self.save_image(crop_data,save_image_path,name)
 
                         copy_annotation = copy.copy(annotation)

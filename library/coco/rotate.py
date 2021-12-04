@@ -14,11 +14,11 @@ def rotate_image_annotation():
     coco = Rotate()
     names = ["data"]
 
-    origin_path = "F://custom/_seperation_/reside_remove"
-    save_path = "F://custom/_seperation_/rotate_remove"
+    # origin_path = "F://custom/_seperation_/reside_remove"
+    # save_path = "F://custom/_seperation_/rotate_remove"
     
-    # origin_path = "F://ct/_train_/crop"
-    # save_path = "F://ct/_train_/rotate"
+    origin_path = "F://ct/_train_/origin"
+    save_path = "F://ct/_train_/origin_rotate"
 
     # origin_path = "E://daq/_train_/crop"
     # save_path = "E://daq/_train_/rotate"
@@ -52,7 +52,7 @@ def rotate_image_annotation():
                 "json_path": f"{path}/json/{name}.json",
                 "save_image_path": f"{save_path}/{objects_name}/image",
                 "save_json_path": f"{save_path}/{objects_name}/json",
-                "angle_split": 90,
+                "angle_split": 45,
             }
             coco.run(options)
             

@@ -15,8 +15,8 @@ def xray_to_color_make():
 
 @dec_func_start_end
 def image_8bit_to_16bit_make():
-    origin_path = "F://custom/_source_/origin/bag_origin"
-    save_path = "F://custom/_source_/xray_bag_8bit_to_16bit"
+    origin_path = "F://custom/_source_/origin/xray_origin"
+    save_path = "F://custom/_source_/20211129_xray_origin_to_gray"
     
     dir_list_options = {
         "dir_path": origin_path
@@ -42,7 +42,6 @@ def image_8bit_to_16bit_make():
         for path, name in zip(paths, names):
             object = path.split("/")[-2]
             
-
             image_options = {
                 "file_name": f"{path}/{name}",
                 "dtype": np.uint8
@@ -112,27 +111,19 @@ def ct_to_png(options={}):
 
 def image_color_to_16bit(data):
     r, g, b = data[:,:,0], data[:,:,1], data[:,:,2]
-    # gray = 0.2126 * r + 0.7152 * g + 0.0722 * b
+    gray = 0.2989 * b + 0.5870 * g + 0.1140 * r
+    result = gray/255 * 65535
     
-    gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
-    
-    cal_gray = (gray-np.min(gray)) / (np.max(gray)-np.min(gray))
-    result = cal_gray * 65535
-    # result = (gray - np.min(gray)) * 255
-    '''
-    if np.max(gray) == np.min(gray):
-        result = (gray - np.min(gray)) * 255
-    else:
-        result = (gray - np.min(gray))//(np.max(gray)-np.min(gray)) * 255
-    '''
     return result
 
 def image_8bit_to_16bit(data):
     data = np.mean(data, axis=2)
-    data = data * 256
+    data = data * 255
     return data
 
 def xray_to_color(options={}):
+    #TODO 개발 진행중 
+    
     load_path = options["load_path"]
     high_file_name = options["high_file_name"]
     low_file_name = options["low_file_name"]

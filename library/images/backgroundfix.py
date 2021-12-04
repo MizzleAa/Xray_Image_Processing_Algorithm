@@ -8,7 +8,7 @@ from library.utils.progress import *
 def background_null_make():
     save_path = "E://daq/_background_/null/none"
     
-    make_dir(save_path,{"is_remove":True})
+    make_dir(save_path,{"is_remove":False})
 
     background_fix_options = {
         "max_width":1200,
@@ -17,11 +17,11 @@ def background_null_make():
     background_fix_data = background_fix_null(background_fix_options)
 
     save_image_options = {
-        "file_name": f"{save_path}/0.png",
+        "file_name": f"{save_path}/2.png",
         
         "dtype": np.uint16,
         "start_pixel": 0,
-        "end_pixel": 65535
+        "end_pixel": 65535*0.6
     }
     save_image(background_fix_data,save_image_options)
     

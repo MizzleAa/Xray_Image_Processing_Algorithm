@@ -20,7 +20,7 @@ def reside_image_annotation():
     names = ["data"]
     
     origin_path = "F://custom/_seperation_/reside_remove"
-    save_path = "F://custom/_seperation_/reside_remove_2"
+    save_path = "F://custom/_seperation_/reside_remove_3"
     
     # origin_path = "F://custom/_seperation_/drug_origin"
     # save_path = "F://custom/_seperation_/drug_reside"
@@ -129,7 +129,6 @@ class Reside(Bone):
             save_image_path = options["save_image_path"]
             save_json_path = options["save_json_path"]
 
-            
             make_dir(save_image_path, options={"is_remove":True})
             make_dir(save_json_path, options={"is_remove":True})
 

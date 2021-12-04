@@ -24,8 +24,11 @@ def background_image_annotation():
     # origin_path = "E://daq/_train_/crop"
     # save_path = "E://daq/_train_/background_fix"
     
-    origin_path = "F://custom/_seperation_/emblem_reside"
-    save_path = "F://custom/_seperation_/emblem_reside_background_fix"
+    origin_path = "F://custom/_others_/refine"
+    save_path = "F://custom/_others_/background_fix"
+    
+    # origin_path = "F://custom/_seperation_/emblem_reside"
+    # save_path = "F://custom/_seperation_/emblem_reside_background_fix"
     
     make_dir(save_path,{"is_remove":True})
 

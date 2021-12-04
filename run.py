@@ -54,7 +54,7 @@ def main():
     # change_category_name()
     
     # 카테고리 ID 변경
-    change_category_id()
+    # change_category_id()
 
     # image / json 합침
     # append_grouping()

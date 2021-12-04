@@ -105,7 +105,59 @@ def opencv_affine_test():
     cv2.waitKey()
     cv2.destroyAllWindows()
 
+def spectrum_map_v1():
+    
+    width = 255
+    height = 255
+    
+    data = np.full(shape=(height,width,3),fill_value=0.0)
+    
+    split_hip = height*math.sqrt(2)
+    
+    for i in range(height):
+        for j in range(width):
+            cal = 1.0-math.sqrt( i*i+j*j ) / (split_hip)
+            
+            data[height-i-1][width-j-1] = cal
+            # data[height-i-1][width-j-1][0] = cal_blue
+            # data[height-i-1][width-j-1][1] = cal_green
+            # data[height-i-1][width-j-1][2] = cal_red
+    cv2.imshow('spectrum_map', data)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
+    
+    return data
+
+def spectrum_run():
+    s_map = spectrum_map_v1()
+    
+    low_load_file_name = "./sample/xray/example_3/low.png"
+    high_load_file_name = "./sample/xray/example_3/high.png"
+    
+    low = cv2.imread(low_load_file_name,-1)
+    high = cv2.imread(high_load_file_name,-1)
+
+    height, width = np.shape(low)
+    
+    data = np.zeros(shape=(height,width,3))
+    
+    for h in range(height):
+        for w in range(width):
+            l_value = low[h][w]
+            h_value = high[h][w]
+
+            l_value = l_value // 256 - 1
+            h_value = h_value // 256 - 1
+            data[h][w] = s_map[l_value][h_value]
+
+    cv2.imshow('spectrum_run', data)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
+    
+
 # opencv_remap_test()
 # opencv_affine_test()
 # opencv_rotate_test()
 
+# spectrum_map()
+spectrum_run()

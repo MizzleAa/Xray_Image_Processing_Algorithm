@@ -19,7 +19,7 @@ def rate_image_annotation():
     # origin_path = "E://ct/_train_/reside"
     # save_path = "E://ct/_train_/rate"
     
-    origin_path = "F://ct/_train_/origin"
+    origin_path = "F://ct/_train_/origin_rotate"
     save_path = "F://ct/_train_/rate"
 
     make_dir(save_path,options={"is_remove":True})
@@ -59,7 +59,7 @@ def rate_image_annotation():
                 "json_path": f"{save_path}/{objects_name}/json/{name}.json",
                 "gt_path": f"{save_path}/{objects_name}/test"
             }
-            # ground_truth_view(ground_truth_options)
+            ground_truth_view(ground_truth_options)
 
 
 class Rate(Bone):
