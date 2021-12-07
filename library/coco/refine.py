@@ -15,8 +15,9 @@ def make_auto_refine_image_annotation():
 
     coco = AutoRefine()
     
-    path = "./prj_synthesis/daq/auto_refine"
+    path = "F:/custom/_others_/origin"
     
+
     dir_list_options = {
         "dir_path": path
     }
@@ -30,18 +31,19 @@ def make_auto_refine_image_annotation():
         progress.update()
 
         result = "auto_refine"
+        
         options = {
-            "end_swith": ".png",
+            "ends_with": ".png",
             "file_path": f"{full}/image",
             "save_path": f"{full}/refine"
         }
-        
+        # print(name)
         change_file_list_name(options)
-        category_name = name.split("_")[1]
-
+        category_name = name
+        # category_name = "null"
         auto_refine_image_category_annotation_options = {
             "image_path": f"{full}/refine",
-            "end_swith": ".png",
+            "ends_with": ".png",
 
             "save_image_path": f"{full}/{result}_image",
             "save_json_path": f"{full}/{result}_json/",
@@ -50,34 +52,22 @@ def make_auto_refine_image_annotation():
             "category_id": 0,
 
             "segmentation_options": {
-                "min_area": 5000,
+                "min_area": 1000,
                 "cliping_dtype": "uint16",
                 "threshold": 60000,
                 "max_pixel": 1
             }
+            
         }
         coco.run(auto_refine_image_category_annotation_options)
 
-        path_options = {
-            "image_path": f"{full}/auto_refine_image",
-            "json_path": f"{full}/auto_refine_json/data.json",
-        }
-        coco.change_image_path(path_options)
-
-        options = {
-            "image_path": f"{full}/auto_refine_image",
-            "json_path": f"{full}/auto_refine_json/data.json",
-            "save_image_path": f"{full}/crop_image",
-            "save_json_path": f"{full}/crop_json",
-        }
-        coco.crop_image_annotation(options)
-
         ground_truth_options = {
-            "image_path": f"{full}/crop_image",
-            "json_path": f"{full}/crop_json/data.json",
-            "gt_path": f"{full}/crop_test"
+            "image_path": f"{full}/{result}_image",
+            "json_path": f"{full}/{result}_json/data.json",
+            "gt_path": f"{full}/test"
         }
         ground_truth_view(ground_truth_options)
+        
         
 class AutoRefine(Bone):
 
@@ -114,13 +104,13 @@ class AutoRefine(Bone):
 
         file_list_options = {
             "file_path":image_path,
-            "end_swith":ends_with
+            "ends_with":ends_with
         }
         
         _, paths, files = load_file_list(file_list_options)
 
         for path, file in zip(paths,files):
-            data = load_image(path,file)
+            data = self.load_image(path,file)
             
             image = self.init_image_dataset()
             image["id"] = image_id_count
@@ -150,7 +140,7 @@ class AutoRefine(Bone):
                 "load_path":save_json_path,
                 "file_name":"data.json"
             }
-            self.save(json_result, save_options)
+            self.save_json(json_result, save_options)
     
     def _bbox(self, contour):
         x,y,z = np.shape(contour)
