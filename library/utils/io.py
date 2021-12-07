@@ -156,7 +156,9 @@ def change_file_list_name(options):
     ends_with = options["ends_with"]
     file_path = options["file_path"]
     save_path = options["save_path"]
-
+    
+    make_dir(save_path)
+    
     rename_key = 0
 
     file_list_options = {
