@@ -155,9 +155,43 @@ def spectrum_run():
     cv2.destroyAllWindows()
     
 
-# opencv_remap_test()
-# opencv_affine_test()
-# opencv_rotate_test()
+def cv_imread_color_test():
+    high_load_file_name = "./sample/xray/example_3/high.png"
+    high = cv2.imread(high_load_file_name,cv2.IMREAD_LOAD_GDAL)
+    # print(high)
+    cv2.imshow('spectrum_run', high)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
 
-# spectrum_map()
-spectrum_run()
+def cv_imread_16bit_3channel():
+    # high_load_file_name = "./sample/xray/example_3/high.png"
+    high_load_file_name = "./sample/ai/example_1/taser_gun/image/00108.png"
+    
+    high = cv2.imread(high_load_file_name,cv2.IMREAD_UNCHANGED)
+    
+    data1 = np.array(high//256, dtype=np.uint8)
+    data2 = np.array(high%256, dtype=np.uint8)
+    data3 = np.array(high//65535*255, dtype=np.uint8)
+    
+    data = cv2.merge((data1, data2, data3))
+    
+    cv2.imshow('data1', data1)
+    cv2.imshow('data2', data2)
+    cv2.imshow('data3', data3)
+    cv2.imshow('data', data)
+    
+    cv2.waitKey()
+    cv2.destroyAllWindows()
+        
+
+if __name__ == '__main__':
+    cv_imread_16bit_3channel()
+    # opencv_remap_test()
+    # opencv_affine_test()
+    # opencv_rotate_test()
+
+    # spectrum_map()
+    # spectrum_run()
+
+    # cv_imread_color_test()
+    pass
