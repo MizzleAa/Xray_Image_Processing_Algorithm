@@ -8,6 +8,41 @@ from library.coco.groundtruth import *
 from library.coco.define import *
 
 @dec_func_start_end
+def draw_image_annotation():
+    coco = Draw()
+    names = ["data"]
+    
+    origin_path = "F://custom/_seperation_/append_multi_synthesis_20211130_2"
+    save_path = "F://custom/_seperation_/draw_append_multi_synthesis_20211130_2"
+    
+    make_dir(save_path,{"is_remove":True})
+    
+    dir_list_options = {
+        "dir_path": origin_path
+    }
+    
+    progress = Progress(max_num=len(names),work_name=__name__)
+
+    for name in names:
+        progress.set_work_name(f" = {name}\n")
+        progress.update()
+    
+        path_options = {
+            "image_path": f"{origin_path}/image",
+            "json_path": f"{origin_path}/json/{name}.json",
+        }
+        coco.change_image_path(path_options)
+
+        options = {
+            "image_path": f"{origin_path}/image",
+            "json_path": f"{origin_path}/json/{name}.json",
+            "save_image_path": f"{save_path}/image",
+            "save_json_path": f"{save_path}/json",
+            "selected_rate": 0.1
+        }
+        coco.run(options)
+        
+@dec_func_start_end
 def seperation_image_annotation():
     """Background 클레스 사용 예제
 
@@ -25,8 +60,11 @@ def seperation_image_annotation():
     # origin_path = "F://custom/_train_/origin"
     # save_path = "F://custom/_train_/seperation"
     
-    origin_path = "F://custom/_source_/ct_to_16bit"
-    save_path = "F://custom/_source_/ct_seperation"
+    # origin_path = "F://custom/_source_/ct_to_16bit"
+    # save_path = "F://custom/_source_/ct_seperation"
+
+    origin_path = "F://custom/_seperation_/2021_origin"
+    save_path = "F://custom/_seperation_/2021_origin_seperation"
 
     make_dir(save_path,{"is_remove":True})
     dir_list_options = {
@@ -54,7 +92,90 @@ def seperation_image_annotation():
             }
             seperation.run(options)
         # break
+        
+
+class Draw(Bone):
+    
+    
+    def run(self, options):
+        try:
+            image_path = options["image_path"]
+            json_path = options["json_path"]
+
+            selected_rate = options["selected_rate"]
             
+            save_image_path = options["save_image_path"]
+            save_json_path = options["save_json_path"]
+
+            make_dir(save_image_path, options={"is_remove":True})
+            make_dir(save_json_path, options={"is_remove":True})
+
+            json_path, json_file = self.split_path_name(json_path)
+
+            json_data_options = {
+                "load_path":json_path,
+                "file_name":json_file
+            }
+            json_data = self.load_json(json_data_options)
+
+            images = self.get_images(json_data)
+            annotations = self.get_annotations(json_data)
+            categories = self.get_categories(json_data)
+
+            image_idx = 0
+            annotation_idx = 0
+
+            json_result = {
+                "images":[],
+                "categories":categories,
+                "annotations":[],
+            }
+    
+            for image in images:
+                value = random.random()
+                if value < selected_rate:
+                    # print(value)
+                    image_id = image["id"]
+                    check = False
+                    for _, annotation in enumerate(annotations):
+                        annotation_image_id = annotation["image_id"]
+                        
+                        if image_id == annotation_image_id:
+                            image_path = image["path"]
+                            path, name = self.split_path_name(image_path)
+                            
+                            if(os.path.isfile(f"{path}/{name}")):
+                                check = True
+                                data = self.load_image(path, name)
+
+                                copy_annotation = copy.copy(annotation)
+                                copy_annotation["id"] = annotation_idx
+                                copy_annotation["image_id"] = image_idx
+                                
+                                json_result["annotations"].append(copy_annotation)
+                                
+                                annotation_idx += 1
+                    if check:
+                        name = f"{image_idx}.png"
+
+                        copy_image = copy.copy(image)
+                        copy_image["id"] = image_idx
+                        copy_image["path"] = f"{save_image_path}/{name}"
+                        copy_image["file_name"] = f"{name}"
+                        json_result["images"].append(copy_image)
+
+                        self.save_image(data,save_image_path,name)
+                        image_idx += 1
+            
+            save_options = {
+                "load_path":save_json_path,
+                "file_name":json_file
+            }
+            self.save_json(json_result, save_options)
+            
+        except Exception as ex:
+            logger_exception(ex)
+        
 
 class Seperation(Bone):
     """배경화면을 두어 정재된 데이터를 화면의 정중앙으로 위치를 이동시킵니다.
@@ -113,7 +234,7 @@ class Seperation(Bone):
 
             save_path = options["save_path"]
 
-            make_dir(save_path)
+            make_dir(save_path, options={"is_remove":True})
 
             json_path, json_file = self.split_path_name(json_path)
             
