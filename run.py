@@ -6,6 +6,7 @@ from library.coco.alteration import *
 from library.coco.separation import *
 from library.coco.align import *
 from library.coco.rate import *
+from library.coco.refine import *
 
 from library.images.backgroundfix import *
 from library.images.convert import *
@@ -28,6 +29,12 @@ def main():
 
     # groundtruth 검증 
     # ground_truth_view_run()
+    
+    # 자동 정제
+    # make_auto_refine_image_annotation()
+    
+    # 임의 셈플본 출력(val용)
+    # draw_image_annotation()
     
     # 존재하지 않은 이미지의 annotation을 제거
     # reside_image_annotation()
@@ -62,6 +69,7 @@ def main():
     # image / json 분할
     # seperation_image_annotation()
 
+    # smith xray to gray
     # image 8bit(color) 16bit로 변환
     # image_8bit_to_16bit_make()
     

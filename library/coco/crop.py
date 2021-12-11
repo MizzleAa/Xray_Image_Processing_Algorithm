@@ -20,9 +20,11 @@ def crop_image_annotation():
     coco = Crop()
     names = ["data"]
 
-    origin_path = "F://ct/_train_/rate"
-    save_path = "F://ct/_train_/crop"
-
+    origin_path = "F://custom/_others_/null/origin"
+    save_path = "F://custom/_others_/null/crop"
+    
+    # origin_path = "F://ct/_train_/rate"
+    # save_path = "F://ct/_train_/crop"
     
     # origin_path = "F://custom/_others_/background_fix"
     # save_path = "F://custom/_others_/crop"

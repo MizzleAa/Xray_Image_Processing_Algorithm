@@ -15,9 +15,8 @@ def make_auto_refine_image_annotation():
 
     coco = AutoRefine()
     
-    path = "F:/custom/_others_/origin"
+    path = "F:/custom/_others_/null/origin"
     
-
     dir_list_options = {
         "dir_path": path
     }
@@ -117,7 +116,7 @@ class AutoRefine(Bone):
             image["path"] = path
             image["file_name"] = file
             image["height"],image["width"] = np.shape(data)
-
+        
             self.save_image(data,save_image_path,file)
 
             contours, _, _ = segmentation(data, segmentation_options)
@@ -129,7 +128,7 @@ class AutoRefine(Bone):
                 annotation["category_id"] = category_id
                 annotation["id"] = annotation_id_count
                 annotation["image_id"] = image_id_count
-                
+
                 annotation_id_count += 1
                 json_result["annotations"].append(annotation)
 
@@ -140,6 +139,7 @@ class AutoRefine(Bone):
                 "load_path":save_json_path,
                 "file_name":"data.json"
             }
+            # print(save_json_path)
             self.save_json(json_result, save_options)
     
     def _bbox(self, contour):

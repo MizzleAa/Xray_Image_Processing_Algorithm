@@ -12,14 +12,10 @@ def draw_image_annotation():
     coco = Draw()
     names = ["data"]
     
-    origin_path = "F://custom/_seperation_/append_multi_synthesis_20211130_2"
-    save_path = "F://custom/_seperation_/draw_append_multi_synthesis_20211130_2"
+    origin_path = "F://custom/_seperation_/change_id_json_test_20211130_2/append"
+    save_path = "F://custom/_seperation_/draw_change_id_json_test_20211130_2"
     
     make_dir(save_path,{"is_remove":True})
-    
-    dir_list_options = {
-        "dir_path": origin_path
-    }
     
     progress = Progress(max_num=len(names),work_name=__name__)
 
@@ -38,7 +34,7 @@ def draw_image_annotation():
             "json_path": f"{origin_path}/json/{name}.json",
             "save_image_path": f"{save_path}/image",
             "save_json_path": f"{save_path}/json",
-            "selected_rate": 0.1
+            "selected_rate": 0.01
         }
         coco.run(options)
         

@@ -154,7 +154,7 @@ class SingleSynthesis(Bone):
             "json_path":{json_path},
             "save_image_path":{save_image_path},
             "save_json_path":{save_json_path},
-            "end_swith":{end_swith},
+            "ends_with":{ends_with},
             "file_path":{file_path}
         }
         '''
@@ -538,7 +538,6 @@ class MultiSynthesis(Bone):
             sequential_count = 0 
         result = sequential_count
         return result
-
 
     def overlap_check(self, background, data_list, now_bbox):
         result = False

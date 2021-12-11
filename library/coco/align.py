@@ -7,6 +7,7 @@ from library.utils.progress import *
 from library.coco.groundtruth import *
 from library.coco.define import *
 
+
 @dec_func_start_end
 def reside_image_annotation():
     """Background 클레스 사용 예제
@@ -19,8 +20,11 @@ def reside_image_annotation():
     coco = Reside()
     names = ["data"]
     
-    origin_path = "F://custom/_seperation_/reside_remove"
-    save_path = "F://custom/_seperation_/reside_remove_3"
+    origin_path = "F://custom/_seperation_/2021_origin"
+    save_path = "F://custom/_seperation_/2021_origin_resider"
+
+    # origin_path = "F://custom/_seperation_/2021_origin"
+    # save_path = "F://custom/_seperation_/reside_remove_3"
     
     # origin_path = "F://custom/_seperation_/drug_origin"
     # save_path = "F://custom/_seperation_/drug_reside"
@@ -195,4 +199,4 @@ class Reside(Bone):
             
         except Exception as ex:
             logger_exception(ex)
-            
+

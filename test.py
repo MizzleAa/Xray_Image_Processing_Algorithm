@@ -154,7 +154,6 @@ def spectrum_run():
     cv2.waitKey()
     cv2.destroyAllWindows()
     
-
 def cv_imread_color_test():
     high_load_file_name = "./sample/xray/example_3/high.png"
     high = cv2.imread(high_load_file_name,cv2.IMREAD_LOAD_GDAL)
@@ -182,10 +181,252 @@ def cv_imread_16bit_3channel():
     
     cv2.waitKey()
     cv2.destroyAllWindows()
+
+import argparse
+def argparse_example():
+	ap = argparse.ArgumentParser()
+	ap.add_argument("-i", "--images", required=True, type=str,
+		help="path to input directory of images")
+	ap.add_argument("-o", "--output", required=True, type=str,
+		help="path to output directory to store intermediate files")
+	ap.add_argument("-a", "--hashes", required=True, type=str,
+		help="path to output hashes dictionary")
+	ap.add_argument("-p", "--procs", type=int, default=-1,
+		help="# of processes to spin up")
+	args = vars(ap.parse_args())
+
+
+import multiprocessing
+from multiprocessing import Pool, Process, Manager
+
+class MTSample_1:
+    
+    def __init__(self) -> None:
+        self.num_list = ["1","2","3","4"]
+    
+    def count(self, name):
+        sum = 0
+        for i in range(1,10000):
+            print(name, sum)
+            sum += i
+        
+        return sum
+    
+    def run(self):
+        pool = multiprocessing.Pool(processes=4)
+        pool.map(self.count, self.num_list)
+        pool.close()
+        pool.join()
+
+def mt_test_1():
+    mt_sample = MTSample_1()
+    mt_sample.run()
+
+class MTSample_2:
+    # json 빠르게 읽고 쓰기
+    def __init__(self) -> None:
+        
+        pass
+
+    def load_json(self, load_path, file_name):
+        start_time = time.time()
+        with open(f'{load_path}/{file_name}', "rb") as json_file:
+            json_data = json.load(json_file)
+        end_time = time.time()
+        print("load_json = ", end_time-start_time)
+        # print(len(json_data["images"]))
+        return json_data
+
+    def load_text(self, load_path, file_name):
+        start_time = time.time()
+        
+        file = open(f"{load_path}/{file_name}", "rb")
+        text_data = file.read()
+        file.close()
+        my_json = text_data.decode('utf-8')
+        data = json.loads(my_json)
+        # print(data["images"])
+        end_time = time.time()
+        # print(text_data)
+        print("load_text = ", end_time-start_time)
+        
+        return data
+    
+    def save_json(self, json_data, save_path, file_name):
+        start_time = time.time()
+        # dict_to_byte = json.dumps(json_data).encode('utf-8')
+        with open(f"{save_path}/{file_name}", "w") as json_file:
+            json.dump(json_data, json_file)
+            # json.dump(json_data, json_file, indent=4, separators=(',', ': '))
+        end_time = time.time()
+        print("save_json = ", end_time-start_time)
+    
+    def save_text(self, json_data, save_path, file_name):
+        start_time = time.time()
+        
+        dict_to_byte = json.dumps(json_data).encode('utf-8')
+        
+        file = open(f"{save_path}/{file_name}", "wb")
+        file.write(dict_to_byte)
+        file.close()
+        # print(data["images"])
+        end_time = time.time()
+        # print(text_data)
+        print("save_text = ", end_time-start_time)
+    
+    def run(self):
+        load_path = "./sample/json"
+        save_path = "./sample/json/result"
+        file_name = "data.json"
+        
+        json_data = self.load_json(load_path,file_name)
+        text_data = self.load_text(load_path,file_name)
+        
+        self.save_json(json_data, save_path, f"json_{file_name}")
+        self.save_text(text_data, save_path, f"text_{file_name}")
+        
+        result_json_data = self.load_json(save_path, f"json_{file_name}")
+        result_text_data = self.load_text(save_path, f"text_{file_name}")
+        
+        print(len(result_json_data["images"]), len(result_json_data["categories"]), len(result_json_data["annotations"]))
+        print(len(result_text_data["images"]), len(result_text_data["categories"]), len(result_text_data["annotations"]))
         
 
+class MTSample_3(MTSample_2):
+    def __init__(self) -> None:
+        pass
+        
+    def make_dir(self, file_path, options={"is_remove": False}):
+        is_remove = options["is_remove"]
+
+        try:
+            if is_remove:
+                shutil.rmtree(file_path)
+        except Exception as ex:
+            pass
+        try:
+            os.makedirs(file_path)
+        except Exception as ex:
+            pass
+
+    def load_file_list(self, file_path):
+        file_names = os.listdir(file_path)
+        return file_names
+    
+    def file_copy(self, dict_value):
+        load_path = dict_value["load_path"]
+        save_path = dict_value["save_path"]
+        file_list = dict_value["file_list"]
+        
+        for file in file_list:
+            src = f"{load_path}/{file}"
+            dst = f"{save_path}/{file}"
+            shutil.copy(src,dst)
+    
+    def single(self):
+        load_file_path = "./sample/image"
+        save_file_path = "./sample/copy_image"
+        
+        self.make_dir(save_file_path, options={"is_remove":True})
+        start_time = time.time()
+        
+        file_list = self.load_file_list(load_file_path)
+        dict_value = {
+            "load_path":load_file_path,
+            "save_path":save_file_path,
+            "file_list":file_list
+        }
+        
+        self.file_copy(dict_value)
+        end_time = time.time()
+        print(end_time-start_time)
+        
+    
+    def run(self):
+        # self.single()
+        self.multi()
+        
+    def multi(self):
+        load_file_path = "./sample/image"
+        save_file_path = "./sample/copy_image"
+        
+        self.make_dir(save_file_path, options={"is_remove":True})
+        start_time = time.time()
+        
+        file_list = self.load_file_list(load_file_path)
+        cpu_count = multiprocessing.cpu_count()//2
+        pool = multiprocessing.Pool(processes=cpu_count)
+                
+        dict_value = {
+            "load_path":load_file_path,
+            "save_path":save_file_path,
+            "file_list":file_list[0:800]
+        }
+        pool.starmap(func=self.file_copy, iterable=[(dict_value,)])
+        dict_value = {
+            "load_path":load_file_path,
+            "save_path":save_file_path,
+            "file_list":file_list[800:-1]
+        }
+        pool.starmap(func=self.file_copy, iterable=[(dict_value,)])
+        
+        pool.close()
+        pool.join()
+        
+        end_time = time.time()
+        print(end_time-start_time)
+        
+def mt_test_3():
+    mt_sample = MTSample_3()
+    mt_sample.run()
+    
+import multiprocessing.sharedctypes as ms
+import ctypes 
+from multiprocessing import Lock
+from multiprocessing.managers import BaseManager, SyncManager
+from multiprocessing import Manager
+
+class MathsClass:
+    
+    def add(self, step):
+        result = 0
+        for i in range(step):
+            result += i
+        print(result)
+        return result
+    
+    def minus(self, step):
+        result = 0
+        for i in range(step):
+            result -= i
+        print(result)
+        return result
+
+from multiprocessing import Value, Array, Manager
+class MyManager(SyncManager):
+    pass
+
+def mt_test_4():
+    MyManager.register('Maths', MathsClass)
+    
+    with MyManager() as manager:
+        maths = manager.Maths()
+        # add = maths.add(1000)
+        # minus = maths.minus(1000)
+        num = manager.dict()
+        arr = manager.list(range(10))
+        
+        p1 = Process(target=maths.add,args=(10000, ))
+        p2 = Process(target=maths.minus,args=(10000, ))
+        
+        p1.start()
+        p2.start()
+        
+        p1.join()
+        p2.join()
+        
 if __name__ == '__main__':
-    cv_imread_16bit_3channel()
+    # cv_imread_16bit_3channel()
     # opencv_remap_test()
     # opencv_affine_test()
     # opencv_rotate_test()
@@ -194,4 +435,8 @@ if __name__ == '__main__':
     # spectrum_run()
 
     # cv_imread_color_test()
+    # mt_test_1()
+    # mt_test_2()
+    # mt_test_3()
+    mt_test_4()
     pass

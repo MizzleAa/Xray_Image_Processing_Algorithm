@@ -35,7 +35,7 @@ class Bone:
             "image_id": 0,
             "category_id": 0,
             "segmentation": [[]],
-            "area": 0,
+            "area": 2,
             "bbox": [],
             "iscrowd": False,
             "isbbox": False,
@@ -118,7 +118,7 @@ class Bone:
         try:
             image_path = options["image_path"]
             json_path = options["json_path"]
-            end_swith = "png"
+            ends_with = "png"
 
             json_path, json_file = self.split_path_name(json_path)
 
@@ -140,7 +140,7 @@ class Bone:
             }
 
             for image in images:
-                file_name = f"{image['file_name'].split('.')[0]}.{end_swith}"
+                file_name = f"{image['file_name'].split('.')[0]}.{ends_with}"
 
                 copy_image = copy.copy(image)
                 copy_image["path"] = f"{image_path}/{file_name}"

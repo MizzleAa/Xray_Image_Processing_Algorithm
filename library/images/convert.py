@@ -16,7 +16,7 @@ def xray_to_color_make():
 @dec_func_start_end
 def image_8bit_to_16bit_make():
     origin_path = "F://custom/_source_/origin/xray_origin"
-    save_path = "F://custom/_source_/20211129_xray_origin_to_gray"
+    save_path = "F://custom/_source_/origin/xray_origin_gray"
     
     dir_list_options = {
         "dir_path": origin_path
@@ -47,16 +47,16 @@ def image_8bit_to_16bit_make():
                 "dtype": np.uint8
             }
             data = load_image(image_options)
-            color_to_gray = image_color_to_16bit(data)
+            color_to_gray = image_color_to_gray(data)
             
             file_name = name.split(".")[0]
             make_dir(f"{save_path}/{object}/image")
     
             save_options = {
                 "file_name": f"{save_path}/{object}/image/{file_name}.png",
-                "dtype": np.uint16,
+                "dtype": np.uint8,
                 "start_pixel" : 0,
-                "end_pixel" : 65535
+                "end_pixel" : 255
             }
             save_image(color_to_gray, save_options)
             
@@ -109,11 +109,16 @@ def ct_to_png(options={}):
 
     return result
 
+
+def image_color_to_gray(data):
+    result = cv2.cvtColor(data, cv2.COLOR_BGR2GRAY)
+    return result
+
 def image_color_to_16bit(data):
     r, g, b = data[:,:,0], data[:,:,1], data[:,:,2]
     gray = 0.2989 * b + 0.5870 * g + 0.1140 * r
     result = gray/255 * 65535
-    
+    # result = cv2.cvtColor(data, cv2.COLOR_BGR2GRAY)
     return result
 
 def image_8bit_to_16bit(data):

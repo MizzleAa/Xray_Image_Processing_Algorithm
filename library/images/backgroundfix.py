@@ -36,8 +36,14 @@ def background_fix_run():
     # origin_path = "F://ct/_analysis_/origin"
     # save_path = "F://ct/_analysis_/origin_background_fix"
     
-    origin_path = "F://custom/_seperation_/drug_reside"
-    save_path = "F://custom/_seperation_/drug_reside_background_fix"
+    # origin_path = "F://custom/_seperation_/drug_reside"
+    # save_path = "F://custom/_seperation_/drug_reside_background_fix"
+    
+    # origin_path = "F://custom/_seperation_/drug_reside"
+    # save_path = "F://custom/_seperation_/drug_reside_background_fix"
+    
+    origin_path = "F://custom/_seperation_/test_data"
+    save_path = "F://custom/_seperation_/test_data_custom"
     
     dir_list_options = {
         "dir_path": origin_path
@@ -65,6 +71,7 @@ def background_fix_run():
                 "file_name": f"{full}/image/{name}",
                 "dtype": np.uint16
             }
+            
             data = load_image(load_image_options)
             background_fix_data = background_fix_center(data, background_fix_options)
             
