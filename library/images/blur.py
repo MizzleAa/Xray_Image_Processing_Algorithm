@@ -46,26 +46,58 @@ def blur_run():
             # print(save_image_options["file_name"])
             save_image(blur_data,save_image_options)
 
-def blur(data, options={}):
-    kernel = np.array(
-        [
-            [0.0,1.0,0.0], 
-            [1.0,2.0,1.0], 
-            [0.0,1.0,0.0]
-        ]
-    )
-    kernel = kernel / np.sum(kernel)
-    # kernel = kernel / np.sum(kernel)
-    array_list = []
+# def blur(data, options={}):
+#     kernel = np.array(
+#         [
+#             [0.0,1.0,0.0], 
+#             [1.0,2.0,1.0], 
+#             [0.0,1.0,0.0]
+#         ]
+#     )
+#     kernel = kernel / np.sum(kernel)
+#     # kernel = kernel / np.sum(kernel)
+#     array_list = []
     
-    for y in range(3):
-        copy_array = np.copy(data)
-        copy_array = np.roll(copy_array, y - 1, axis=0)
-        for x in range(3):
-            copy_array_x = np.copy(copy_array)
-            copy_array_x = np.roll(copy_array_x, x - 1, axis=1)*kernel[y,x]
-            array_list.append(copy_array_x)
+#     for y in range(3):
+#         copy_array = np.copy(data)
+#         copy_array = np.roll(copy_array, y - 1, axis=0)
+#         for x in range(3):
+#             copy_array_x = np.copy(copy_array)
+#             copy_array_x = np.roll(copy_array_x, x - 1, axis=1)*kernel[y,x]
+#             array_list.append(copy_array_x)
 
-    array_list = np.array(array_list)
-    array_list_sum = np.sum(array_list, axis=0)
-    return array_list_sum
+#     array_list = np.array(array_list)
+#     array_list_sum = np.sum(array_list, axis=0)
+#     return array_list_sum
+
+def sharp(data, level):
+    kernel = Kernel.sharp(level)
+    
+    result = cv2.filter2D(data, ddepth=-1, kernel=kernel)
+    result = result.astype(data.dtype)
+
+    return result
+
+
+def blur(data, level):
+    kernel = Kernel.blur(level)
+
+    result = cv2.filter2D(data, ddepth=-1, kernel=kernel)
+    result = result.astype(data.dtype)
+
+    return result
+
+class Kernel:
+    @staticmethod
+    def sharp(level):
+        x = np.full((3,3),-1)
+        x[1,1] = 9+level-1
+        return x
+        
+    
+    @staticmethod
+    def blur(level):
+        level = abs(level)*2
+        return np.ones( (level,level) ) / (level*level)
+
+    
