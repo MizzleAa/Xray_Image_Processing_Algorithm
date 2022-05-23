@@ -1,5 +1,16 @@
 from library.utils.header import *
 
+def histogram(data):
+    '''
+    #result = cv2.equalizeHist(data)
+    #return result
+    '''
+    height, width = data.shape[0:2]
+    min_value = np.min(data)
+    max_value = np.max(data)
+    print(min_value, max_value)
+    return data
+
 def rotate(data, angle):
     '''
     options = {
@@ -58,6 +69,19 @@ def opencv_rotate_test():
     cv2.imshow('rotate_image', rotate_image)
     cv2.waitKey()
     cv2.destroyAllWindows()
+    
+def opencv_histogram_test():
+    load_file_name = "./sample/xray/example_7/image/20220405161005_lupin_v4_00070_side.jpg"
+    
+    #image = cv2.imread(load_file_name,cv2.IMREAD_GRAYSCALE)
+    image = cv2.imread(load_file_name,cv2.IMREAD_UNCHANGED)
+    histogram_image = histogram(image)
+    
+    cv2.imshow('origin', image)
+    cv2.imshow('histogram', histogram_image)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
+    
     
 def opencv_remap_test():
     load_file_name = "./sample/16bit.png"
@@ -430,6 +454,7 @@ if __name__ == '__main__':
     # opencv_remap_test()
     # opencv_affine_test()
     # opencv_rotate_test()
+    # opencv_histogram_test()
 
     # spectrum_map()
     # spectrum_run()
@@ -438,5 +463,5 @@ if __name__ == '__main__':
     # mt_test_1()
     # mt_test_2()
     # mt_test_3()
-    mt_test_4()
+    # mt_test_4()
     pass

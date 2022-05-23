@@ -12,8 +12,12 @@ from library.images.backgroundfix import *
 from library.images.convert import *
 from library.images.windowlevel import *
 from library.images.blur import *
+from library.images.histogram import *
 
 def main():
+    
+    # histogram 평횔비 
+    histogram_make()
     
     # window level 조절
     # windowlevel_make()

@@ -70,14 +70,6 @@ def blur_run():
 #     array_list_sum = np.sum(array_list, axis=0)
 #     return array_list_sum
 
-def sharp(data, level):
-    kernel = Kernel.sharp(level)
-    
-    result = cv2.filter2D(data, ddepth=-1, kernel=kernel)
-    result = result.astype(data.dtype)
-
-    return result
-
 
 def blur(data, level):
     kernel = Kernel.blur(level)
@@ -88,13 +80,6 @@ def blur(data, level):
     return result
 
 class Kernel:
-    @staticmethod
-    def sharp(level):
-        x = np.full((3,3),-1)
-        x[1,1] = 9+level-1
-        return x
-        
-    
     @staticmethod
     def blur(level):
         level = abs(level)*2
