@@ -37,6 +37,16 @@ def save_image(data, options):
     )
     img.save(file_name)
 
+def load_raw(data, options):
+    dtype = options["dtype"]
+    file_name = options["file_name"]
+    width = options["width"]
+    
+    raw = np.fromfile(raw, dtype=dtype, sep="")
+    raw = np.reshape(raw, [len(raw_image)//fix_width, fix_width]) 
+    result = raw.astype(dtype)
+    return result
+
 def save_raw(data, options):
     '''
     options = {
