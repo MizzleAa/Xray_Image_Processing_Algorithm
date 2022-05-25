@@ -1,4 +1,5 @@
 from library.utils.header import *
+from library.utils.io import *
 
 def histogram(data):
     '''
@@ -448,7 +449,70 @@ def mt_test_4():
         
         p1.join()
         p2.join()
-        
+    
+    
+def raw_read_1():
+    import numpy as np
+    from matplotlib import pyplot as plt
+    
+    file_path = "./sample/xray/example_9"
+    file_name = "49_V_H_20220523-184900_580x413.raw"
+    load_file_name = f"{file_path}/{file_name}"
+    
+    raw = open(load_file_name)
+    #raw_new.tofile(raw)
+    #raw.close()
+    #raw.close()
+    raw_image = np.fromfile(raw, dtype=np.uint16, sep="")
+    
+    raw_image = np.reshape(raw_image, [413,580]) 
+    raw_image = raw_image%256
+    
+    options = {
+        "file_name":f"{file_path}/save_{file_name}.png",
+        "dtype": np.uint8,
+        "start_pixel": 0,
+        "end_pixel":255
+    }
+    save_image(raw_image, options)
+    
+
+def raw_read_2():
+    file_path = "./sample/xray/example_8"
+    file_name = "20191231113100_BSIU3027810_19DJSCE104I_TOP_HIGH.raw"
+    load_file_name = f"{file_path}/{file_name}"
+    
+    raw = open(load_file_name)
+    #raw_new.tofile(raw)
+    #raw.close()
+    #raw.close()
+    fix_width = 5000
+    
+    raw_image = np.fromfile(raw, dtype=np.uint32, sep="")
+    raw_image = np.reshape(raw_image, [len(raw_image)//fix_width, fix_width]) 
+    data = raw_image.astype(np.int32)
+    #잡음 문제 때문에 생기는 현상
+    #1
+    max_depth = np.iinfo(np.int32).max
+    data[data==0] = np.max(data)
+    data = (data - np.min(data))/(np.max(data)-np.min(data)) * np.iinfo(np.uint16).max
+    data[data==np.max(data)] = 0
+    #음영비 조절
+    #2
+    # data = 1.5*data-65535//2
+    # data[data>65535] = 65535
+    # data[data<0] = 0
+    data = data.astype(np.uint16)
+    
+    #print(data.dtype)
+    options = {
+        "file_name":f"{file_path}/save_{file_name}.png",
+        "dtype": np.uint16,
+        "start_pixel": np.iinfo(data.dtype).min,
+        "end_pixel": np.iinfo(data.dtype).max
+    }
+    save_image(data, options)
+    
 if __name__ == '__main__':
     # cv_imread_16bit_3channel()
     # opencv_remap_test()
@@ -464,4 +528,8 @@ if __name__ == '__main__':
     # mt_test_2()
     # mt_test_3()
     # mt_test_4()
+    
+    #raw_read_1()
+    raw_read_2()
+    
     pass

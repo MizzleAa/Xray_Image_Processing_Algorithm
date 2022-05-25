@@ -164,6 +164,18 @@ def xray_to_color(options={}):
     plt.imshow(result)
     plt.show()
     #save_image(result, save_options)
+
+def xray_container_32bit_to_16bit(data, options={}):
+    fix_width = options["fix_width"]
+    
+    max_depth = np.iinfo(np.int32).max
+    
+    data[data==0] = np.max(data)
+    data = (data - np.min(data))/(np.max(data)-np.min(data)) * np.iinfo(np.uint16).max
+    data[data==np.max(data)] = 0
+    data = data.astype(np.uint16)
+    
+    return data
     
 def sample_graph(high, low):
     # TODO : 수식 알고리즘 수행
