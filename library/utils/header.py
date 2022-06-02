@@ -15,7 +15,10 @@ import shutil
 import sys
 
 from abc import *
+
 from shutil import copyfile
+from shutil import get_terminal_size
+
 from distutils.dir_util import copy_tree
 
 def _copyfileobj_patched(fsrc, fdst, length=16*1024*1024):
