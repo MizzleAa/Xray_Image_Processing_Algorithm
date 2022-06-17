@@ -17,12 +17,16 @@ def append_grouping():
         
     """
     grouping = AppendGrouping()
+    folder = "crop"
+    
+    origin_path = f"./sample/xray/example_10/object/{folder}"
+    save_path = f"./sample/xray/example_10/object/append_{folder}"
 
     # folder = "synthesis"
-    folder = "multi_synthesis_20211130_2"
+    # folder = "multi_synthesis_20211130_2"
     
-    origin_path = f"F://custom/_seperation_/{folder}"
-    save_path = f"F://custom/_seperation_/append_{folder}"
+    # origin_path = f"F://custom/_seperation_/{folder}"
+    # save_path = f"F://custom/_seperation_/append_{folder}"
 
     # origin_path = f"D://daq/_train_/classifier_{folder}"
     # save_path = f"D://daq/_train_/append_{folder}"
@@ -32,10 +36,10 @@ def append_grouping():
 
     make_dir(save_path,{"is_remove":True})
 
-    ben_json_path = f"E://daq/_json_"
-    ben_json_name = f"category_ben.json"
-    ben_json = load_json(ben_json_path,ben_json_name)
-
+    # ben_json_path = f"E://daq/_json_"
+    # ben_json_name = f"category_ben.json"
+    # ben_json = load_json(ben_json_path,ben_json_name)
+    
     dir_list_options = {
         "dir_path": origin_path
     }
@@ -45,10 +49,10 @@ def append_grouping():
     json_list = []
 
     for path in paths:
-        for ben in ben_json["ben_list"]:
-            if path.split("/")[-1] != ben:
-                file_path_list.append(f"{path}/image")
-                json_list.append(f"{path}/json/data.json")
+        #for ben in ben_json["ben_list"]:
+        #    if path.split("/")[-1] != ben:
+        file_path_list.append(f"{path}/image")
+        json_list.append(f"{path}/json/data.json")
 
     file_path_list = sorted(set(file_path_list))
     json_list = sorted(set(json_list))
@@ -153,7 +157,7 @@ class AppendGrouping(Bone):
                 json_data_list.append(json_data)
                 categories = self.get_categories(json_data)
                 category_dict_list, categories_list = self.category_overlap_check(categories_list,categories)
-            # print(category_dict_list)
+            print(category_dict_list)
             for _, json_data in enumerate(json_data_list):
                 
                 images = self.get_images(json_data)
@@ -195,7 +199,7 @@ class AppendGrouping(Bone):
                     
                     shutil.copy(image["path"], copy_image["path"])
                 
-                    progress.set_work_name(f" = {...}\n")
+                    #progress.set_work_name(f" = {...}\n")
                     progress.update()
                 
             categories = []

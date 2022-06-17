@@ -9,6 +9,60 @@ from library.coco.define import *
 from library.images.synthesis import *
 from library.images.backgroundfix import *
 
+
+@dec_func_start_end
+def container_synthesis_image_annotation():
+
+    coco = SingleSynthesis()
+    names = ["data"]
+
+    origin_path = "./sample/xray/example_10/object/crop"
+    save_path = "./sample/xray/example_10/result"
+    background_path = "./sample/xray/example_10/background"
+
+    make_dir(save_path,{"is_remove":True})
+
+    dir_list_options = {
+        "dir_path": origin_path
+    }
+
+    fulls, _, _ = load_dir_list(dir_list_options)
+
+    progress = Progress(max_num=len(fulls),work_name=__name__)
+    
+    for full in fulls:
+        #progress.set_work_name(f" = {full}\n")
+        progress.update()
+
+        for name in names:
+            path_options = {
+                "image_path": f"{full}/image",
+                "json_path": f"{full}/json/{name}.json",
+            }
+            coco.change_image_path(path_options)
+
+            objects_name = full.split("/")[-1]
+            options = {
+                "image_path": f"{full}/image",
+                "json_path": f"{full}/json/{name}.json",
+                "save_image_path": f"{save_path}/{objects_name}/image",
+                "save_json_path": f"{save_path}/{objects_name}/json",
+                "ends_with": ".png",
+                "file_path": background_path,
+                "inner_point_options": {
+                    "padding_width":500,
+                    "padding_height":500
+                }
+            }
+            coco.run(options)
+            
+            ground_truth_options = {
+                "image_path": f"{save_path}/{objects_name}/image",
+                "json_path": f"{save_path}/{objects_name}/json/{name}.json",
+                "gt_path": f"{save_path}/{objects_name}/test"
+            }
+            ground_truth_view(ground_truth_options)
+
     
 
 @dec_func_start_end
@@ -205,7 +259,7 @@ class SingleSynthesis(Bone):
                 "alpha": 1,
                 "beta": 1,
                 "correction_pixel": 0,
-                "max_pixel": 65535
+                "max_pixel": 255
             }
 
             file_list_options = {
@@ -219,10 +273,10 @@ class SingleSynthesis(Bone):
             for path, file in zip(background_paths, background_files):
                 data = self.load_image(path, file)
                 backgrounds.append(data)
-            
+            #print("backgrounds=", len(backgrounds))
             for background in backgrounds: 
-                max_height, max_width = np.shape(background)
-
+                max_height, max_width = background.shape[:2]
+                
                 for image in images:
                     image_id = image["id"]
 
@@ -239,7 +293,7 @@ class SingleSynthesis(Bone):
                             point_x, point_y = self.inner_point(
                                 background, data, inner_point_options)
 
-                            background_fix_height, background_fix_width = np.shape(background)
+                            background_fix_height, background_fix_width = background.shape[:2]
 
                             background_fix_point_options["max_width"] = background_fix_width
                             background_fix_point_options["max_height"] = background_fix_height
@@ -248,7 +302,7 @@ class SingleSynthesis(Bone):
                             
                             background_fix_data = background_fix_position(data, background_fix_point_options)
                             
-                            synthesis_data = synthesis(background, background_fix_data, synthesis_options)
+                            synthesis_data = synthesis(background[:,:,0], background_fix_data, synthesis_options)
                             
                             copy_annotation = copy.copy(annotation)
                             copy_annotation["bbox"] = self._bbox(bbox, point_x, point_y)
@@ -269,7 +323,11 @@ class SingleSynthesis(Bone):
                     copy_image["file_name"] = name
                     copy_image["id"] = image_idx
                     json_result["images"].append(copy_image)
-                    self.save_image(synthesis_data,save_image_path,name)
+                    save_options = {
+                        "dtype":np.uint8,
+                        "end_pixel":255
+                    }
+                    self.save_image(synthesis_data,save_image_path,name, save_options)
                     image_idx += 1
 
 

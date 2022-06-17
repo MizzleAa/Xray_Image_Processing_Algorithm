@@ -186,11 +186,11 @@ class GroundTruth_View:
                 text_size, _ = cv2.getTextSize(
                     label_text, cv2.FONT_HERSHEY_DUPLEX, 0.5, 1)
                 text_w, text_h = text_size
-                cv2.rectangle(
-                    image, (bbox[0], bbox[1] - 4, text_w, text_h + 7), (0, 0, 0), -1)
-                cv2.putText(image, label_text, (bbox[0], bbox[1] + 10), cv2.FONT_HERSHEY_DUPLEX, 0.5,
-                            bbox_color,
-                            1, cv2.LINE_AA)
+                #cv2.rectangle(
+                #    image, (bbox[0], bbox[1] - 4, text_w, text_h + 7), (0, 0, 0), -1)
+                # cv2.putText(image, label_text, (bbox[0], bbox[1] + 10), cv2.FONT_HERSHEY_DUPLEX, 0.5,
+                #             bbox_color,
+                #             1, cv2.LINE_AA)
                 if "segmentation" in ann.keys():
                     segm = ann['segmentation']
                     segmentation = [self._coordinate_segm(s) for s in segm]

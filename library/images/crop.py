@@ -58,3 +58,4 @@ def cutting(x,y,width,height):
         [x+((rate-1)*width//rate ),y,x+width,y+height],
     ]
     return result
+

@@ -513,6 +513,314 @@ def raw_read_2():
     }
     save_image(data, options)
     
+#########################################
+from shutil import copyfile
+import asyncio
+from multiprocessing import Process, Pool, Queue, freeze_support
+from library.utils.progress import Progress
+import fnmatch
+import glob
+
+class Container:
+    def __init__(self):
+        pass
+    
+    def run(self, load_path, save_path):
+        print(load_path)
+    
+        for (root, directories, files) in os.walk(load_path):
+            for file in files:
+                try:
+                    file_path = os.path.join(root, file)
+                    
+                    if file.endswith(".jpg"):
+                        file_split_path = f"{save_path}/JPG/{file}"
+                        copyfile(file_path,file_split_path)
+
+                    if file.endswith(".png"):
+                        file_split_path = f"{save_path}/PNG/{file}"
+                        copyfile(file_path,file_split_path)
+
+                    if file.endswith(".raw"):
+                        file_split_path = f"{save_path}/RAW/{file}"
+                        copyfile(file_path,file_split_path)
+
+                    if file.endswith(".tif"):
+                        file_split_path = f"{save_path}/TIF/{file}"
+                        copyfile(file_path,file_split_path)
+
+                    if file.endswith(".mpt"):
+                        file_split_path = f"{save_path}/MTP/{file}"
+                        copyfile(file_path,file_split_path)
+
+                    if file.endswith(".txt"):
+                        file_split_path = f"{save_path}/TXT/{file}"
+                        copyfile(file_path,file_split_path)
+                except:
+                    pass
+
+def container_run():
+    container = Container()
+    container.run()
+
+def background_fix_position(data, options):
+    '''
+    data,
+    options = {
+        "max_width": {max_width},
+        "max_height": {max_height},
+        "point_x":{point_x},
+        "point_y":{point_y},
+    }
+    '''
+    
+    max_width = options["max_width"]
+    max_height = options["max_height"]
+
+    point_x = options["point_x"]
+    point_y = options["point_y"]
+
+    height, width = data.shape[:2]
+    result = np.full((max_height, max_width, 3), 255)
+
+    result[point_y:point_y + height, point_x:point_x + width] = data
+
+    return result
+
+def synthesis(data_a, data_b, options={}):
+    '''
+    options = {
+        "alpha":{alpha},
+        "beta":{beta},
+        ""
+    }
+    '''
+    alpha = options["alpha"]
+    beta = options["beta"]
+    
+    max_pixel = 255
+    
+    alpha_data = max_pixel - alpha*data_a
+    beta_data = max_pixel - beta*data_b
+
+    result = alpha_data + beta_data
+    return max_pixel-result
+
+
+def container_mix_data():
+    
+    #1. background load
+    load_path = "./sample/xray/example_10/background/"
+    background_image_list = []
+    for (root, directories, files) in os.walk(load_path):
+        for file in files:
+            try:
+                file_path = os.path.join(root, file)
+                options = {
+                    "file_name":file_path,
+                    "dtype":cv2.IMREAD_COLOR
+                }
+                data = cv_load_image(options)
+                background_image_list.append(data)
+            except:
+                pass
+
+    #2. gun load
+    load_path = "./sample/xray/example_10/object/crop/rifle_01220531/image"
+    gun_image_list = []
+    for (root, directories, files) in os.walk(load_path):
+        for file in files:
+            try:
+                file_path = os.path.join(root, file)
+                options = {
+                    "file_name":file_path,
+                    "dtype":cv2.IMREAD_COLOR
+                }
+                data = cv_load_image(options)
+                gun_image_list.append(data)
+            except:
+                pass
+    
+    #3. 합성
+    for index, background in enumerate(background_image_list):
+        
+        random_gun_list = []
+        for _ in range(4):
+            random_gun_list.append(random.randrange(0,len(gun_image_list)))
+            
+        background_gun_image_list = []
+        gun_option_list = []
+        for gun_num in random_gun_list:
+            #배경 고정
+            gun = gun_image_list[gun_num]
+            gun_height, gun_width = gun.shape[:2]
+            height, width = background.shape[:2]
+            gun_option = {
+                "max_width": width,
+                "max_height": height,
+                "point_x": random.randrange(width//10*3,width//10*8),
+                "point_y": random.randrange(height//10*2,height//10*4),
+                "gun_width": gun_width,
+                "gun_height": gun_height,
+            }
+            gun_option_list.append(gun_option)
+            background_gun_image_list.append(background_fix_position(gun,gun_option))
+            
+        background_1 = copy.copy(background)
+        for gun in background_gun_image_list:
+            #합성
+            synthesis_options = {
+                "alpha":1,
+                "beta":1
+            }
+            background_1 = synthesis(background_1,gun,synthesis_options)
+
+        save_path = f"./sample/xray/example_10/result/image_{index}.jpg"
+        save_option = {
+            "file_name": save_path,
+            "dtype": np.uint8,
+            "start_pixel": 0,
+            "end_pixel": 255
+        }
+        
+        cv_save_image(background_1, save_option)
+        # 사각형 치기
+        for gun_option in gun_option_list:
+            #print(gun_option)
+            x = gun_option["point_x"]
+            y = gun_option["point_y"]
+            width = gun_option["gun_width"]+x
+            height = gun_option["gun_height"]+y
+            
+            background_1 = cv2.rectangle(background_1, (x,y), (width,height),(0,0,255),3 )
+        
+        
+        save_path = f"./sample/xray/example_10/result/image_rect_{index}.jpg"
+        save_option = {
+            "file_name": save_path,
+            "dtype": np.uint8,
+            "start_pixel": 0,
+            "end_pixel": 255
+        }
+        cv_save_image(background_1, save_option)
+        pass
+
+def crop_test():
+    
+    load_path = "./sample/xray/example_10/object/crop/rifle_00220531/json"
+    file_name = "data.json"
+    json_data = load_json(load_path, file_name)
+    
+    annotations = json_data["annotations"]
+    images = json_data["images"]
+    categories = json_data["categories"]
+    
+    for annotation in annotations:
+        path = images[annotation["image_id"]]["path"]
+        load_option = {
+            "file_name": path,
+            "dtype":cv2.IMREAD_GRAYSCALE
+        }
+    
+        data = cv_load_image(load_option)
+        segmentation = seg_to_list(annotation["segmentation"][0])
+        result = mask_polygon(data,segmentation)
+        
+        save_option = {
+            "file_name": path,
+            "dtype": np.uint8,
+            "start_pixel": 0,
+            "end_pixel": 255
+        }
+        cv_save_image(result, save_option)
+        
+    '''
+    segmentation = json_data["annotations"][0]["segmentation"][0]
+    x,y,width,height = json_data["annotations"][0]["bbox"]
+    
+    result = []
+    for i in range(0,len(segmentation),2):
+        result.append([segmentation[i],segmentation[i+1]])
+    
+    result = crop_mask(gun_image_result_list[0],result)
+
+    save_path = f"./sample/xray/example_10/result/test.png"
+    save_option = {
+        "file_name": save_path,
+        "dtype": np.uint8,
+        "start_pixel": 0,
+        "end_pixel": 255
+    }
+    
+    cv_save_image(result, save_option)
+    '''
+    
+def seg_to_list(segmentation):
+    result = []
+    for i in range(0,len(segmentation),2):
+        result.append([segmentation[i],segmentation[i+1]])
+        
+    return result
+
+def mask_polygon(data, segmentation):
+    result = copy.copy(data)
+    if len(result.shape) == 3:
+        result = result[:,:,0]
+    height, width = result.shape[:2]
+    
+    mask = np.full( (height, width), 255, dtype = np.int32)
+    segmentation = np.array(segmentation, dtype = np.int32)
+
+    cv2.fillPoly(mask, [segmentation], 1)
+    result = result * mask
+    #result[result==0]=np.iinfo(result.dtype).max
+    return result
+
+def image_24_to_16():
+    #1. background load
+    
+    #load_path = "./sample/xray/example_10/convert/group/image"
+    #load_path = "./sample/xray/example_11/origin/"
+    
+    # load_path = "E://container/신항2센터/JPG/SIDE"
+    # save_path = "E://container/신항2센터/JPG/16bit/SIDE"
+
+    load_path = "./sample/xray/example_12/4types/image"
+    save_path = "./sample/xray/example_12/4types/16bit"
+    
+    background_image_list = []
+    background_name_list = []
+    
+    for (root, directories, files) in os.walk(load_path):
+        for file in files:
+            try:
+                file_path = os.path.join(root, file)
+                #background_name_list.append(file)
+                options = {
+                    "file_name":file_path,
+                    "dtype":-1
+                }
+                #print(options)
+                data = cv_load_image(options)
+                #print(np.min(data), np.max(data))
+                #background_image_list.append(data)
+                name = save_path+"/"+file[:-3]+"png"
+                #print(name)
+                data = data * 65535
+                data = data.astype(np.int32)
+                
+                save_option = {
+                    "file_name": name,
+                    "dtype": np.uint16,
+                    "start_pixel": 0,
+                    "end_pixel": 65535
+                }
+                save_image(data, save_option)
+                
+            except Exception as ex:
+                #print(ex)
+                pass
+
 if __name__ == '__main__':
     # cv_imread_16bit_3channel()
     # opencv_remap_test()
@@ -529,7 +837,10 @@ if __name__ == '__main__':
     # mt_test_3()
     # mt_test_4()
     
-    #raw_read_1()
-    raw_read_2()
-    
+    # raw_read_1()
+    # raw_read_2()
+    # container_run()
+    # container_mix_data()
+    # crop_test()
+    image_24_to_16()
     pass

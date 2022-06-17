@@ -15,9 +15,12 @@ def xray_to_color_make():
 
 @dec_func_start_end
 def image_8bit_to_16bit_make():
-    origin_path = "F://custom/_source_/origin/xray_origin"
-    save_path = "F://custom/_source_/origin/xray_origin_gray"
+    # origin_path = "F://custom/_source_/origin/xray_origin"
+    # save_path = "F://custom/_source_/origin/xray_origin_gray"
     
+    origin_path = "./sample/xray/example_10/convert"
+    save_path = "./sample/xray/example_10/result"
+
     dir_list_options = {
         "dir_path": origin_path
     }
@@ -29,7 +32,7 @@ def image_8bit_to_16bit_make():
     progress = Progress(max_num=len(fulls),work_name=__name__)
     
     for full in fulls:
-        progress.set_work_name(f" = {full}\n")
+        #progress.set_work_name(f" = {full}\n")
         progress.update()
 
         options = {

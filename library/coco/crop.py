@@ -7,6 +7,7 @@ from library.coco.groundtruth import *
 from library.coco.define import *
 
 from library.images.crop import *
+from library.images.mask import *
 
 @dec_func_start_end
 def crop_image_annotation():
@@ -20,8 +21,11 @@ def crop_image_annotation():
     coco = Crop()
     names = ["data"]
 
-    origin_path = "F://custom/_others_/null/origin"
-    save_path = "F://custom/_others_/null/crop"
+    origin_path = "./sample/xray/example_10/object/origin"
+    save_path = "./sample/xray/example_10/object/crop"
+
+    # origin_path = "F://custom/_others_/null/origin"
+    # save_path = "F://custom/_others_/null/crop"
     
     # origin_path = "F://ct/_train_/rate"
     # save_path = "F://ct/_train_/crop"
@@ -58,11 +62,11 @@ def crop_image_annotation():
     progress = Progress(max_num=len(paths),work_name=__name__)
     
     for path in paths:
-        progress.set_work_name(f" = {path}\n")
+        #progress.set_work_name(f" = {path}\n")
         progress.update()
 
         for name in names:
-            path_options = {
+            path_options = {    
                 "image_path": f"{path}/image",
                 "json_path": f"{path}/json/{name}.json",
             }
@@ -192,10 +196,10 @@ class Crop(Bone):
                         crop_options["height"] = bbox[3]
                         #
                         crop_data = crop_rectangle(data, crop_options)
-                        #
-                        name = f"{image_idx}.png"
                         
-                        self.save_image(crop_data,save_image_path,name)
+                        #
+                        name = f"{image_idx}.jpg"
+                        save_options={"dtype": "uint8", "end_pixel": 255}
 
                         copy_annotation = copy.copy(annotation)
                         copy_image = copy.copy(image)
@@ -219,6 +223,9 @@ class Crop(Bone):
                         json_result["images"].append(copy_image)
                         json_result["annotations"].append(copy_annotation)
                         
+                        crop_data = mask_polygon(crop_data, copy_annotation["segmentation"])
+                        self.save_image(crop_data,save_image_path,name,save_options)
+
                         annotation_idx += 1
                         image_idx += 1
 

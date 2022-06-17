@@ -118,7 +118,7 @@ class Bone:
         try:
             image_path = options["image_path"]
             json_path = options["json_path"]
-            ends_with = "png"
+            ends_with = "jpg"
 
             json_path, json_file = self.split_path_name(json_path)
 
@@ -161,14 +161,17 @@ class Bone:
         padding_width = options["padding_width"]
         padding_height = options["padding_height"]
         
-        background_height, background_width = np.shape(background)
+        background_height, background_width = background.shape[:2]
         inner_height, inner_width = np.shape(inner)
 
         height = background_height - inner_height
         width = background_width - inner_width
 
-        result_width = random.randrange(padding_width, width-padding_width)
-        result_height = random.randrange(padding_height, height-padding_height)
+        # result_width = random.randrange(padding_width, width-padding_width)
+        # result_height = random.randrange(padding_height, height-padding_height)
+
+        result_width = random.randrange(background_width//10*3, background_width//10*8)
+        result_height = random.randrange(background_height//10*2, background_height//10*3)
 
         return result_width, result_height
 
