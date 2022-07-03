@@ -188,8 +188,13 @@ class Crop(Bone):
                     if image_id == annotation_image_id:
                         image_path = image["path"]
                         path, name = self.split_path_name(image_path)
+                        
                         data = self.load_image(path, name)
-                        #
+                        
+                        # data = self.load_image(path, name) * 255
+                        # data = data.astype(np.uint8)
+                        # print(np.min(data), np.max(data))
+
                         crop_options["x"] = bbox[0]
                         crop_options["y"] = bbox[1]
                         crop_options["width"] = bbox[2]
@@ -199,13 +204,12 @@ class Crop(Bone):
                         
                         #
                         name = f"{image_idx}.jpg"
-                        save_options={"dtype": "uint8", "end_pixel": 255}
 
                         copy_annotation = copy.copy(annotation)
                         copy_image = copy.copy(image)
 
                         copy_image["id"] = image_idx
-                        copy_image["height"], copy_image["width"] = np.shape(crop_data) 
+                        copy_image["height"], copy_image["width"] = np.shape(crop_data)[0:2]
                         copy_image["path"] = f"{save_image_path}/{name}"
                         copy_image["file_name"] = name
 
@@ -224,13 +228,15 @@ class Crop(Bone):
                         json_result["annotations"].append(copy_annotation)
                         
                         crop_data = mask_polygon(crop_data, copy_annotation["segmentation"])
+
+                        save_options={"dtype": "uint8", "end_pixel": 255}
                         self.save_image(crop_data,save_image_path,name,save_options)
 
                         annotation_idx += 1
                         image_idx += 1
 
-                        del images[img_idx]
-                        break
+                        #del images[img_idx]
+                        #break
 
             save_options = {
                 "load_path":save_json_path,

@@ -147,6 +147,7 @@ def spectrum_map_v1():
             # data[height-i-1][width-j-1][0] = cal_blue
             # data[height-i-1][width-j-1][1] = cal_green
             # data[height-i-1][width-j-1][2] = cal_red
+            
     cv2.imshow('spectrum_map', data)
     cv2.waitKey()
     cv2.destroyAllWindows()
@@ -164,20 +165,32 @@ def spectrum_run():
 
     height, width = np.shape(low)
     
-    data = np.zeros(shape=(height,width,3))
+    data = np.zeros(shape=(height,width,3), dtype=np.float32)
     
     for h in range(height):
         for w in range(width):
             l_value = low[h][w]
             h_value = high[h][w]
 
-            l_value = l_value // 256 - 1
-            h_value = h_value // 256 - 1
-            data[h][w] = s_map[l_value][h_value]
+            # l_value = l_value // 256 - 1
+            # h_value = h_value // 256 - 1
+            #data[h][w] = s_map[l_value][h_value]
 
+            # l_value = l_value // 256 - 1
+            # h_value = h_value // 256 - 1
+            
+            value = h_value/l_value # 기울기
+            
+            data[h][w] = value * 255
+            #print(value, h_value,l_value)
+    
+    print(np.max(data), np.min(data))
+    #print(data)
+    
     cv2.imshow('spectrum_run', data)
     cv2.waitKey()
     cv2.destroyAllWindows()
+    cv2.imwrite("./sample/xray/example_3/result.jpg", data)
     
 def cv_imread_color_test():
     high_load_file_name = "./sample/xray/example_3/high.png"
@@ -821,6 +834,124 @@ def image_24_to_16():
                 #print(ex)
                 pass
 
+
+def xray_excel():
+    import pandas as pd
+    load_path = "./sample/excel/example_1/excel.xlsx"
+    df = pd.read_excel(load_path)
+    data = df.to_numpy()
+    #print(data)
+    result = (data-np.min(data))/(np.max(data)-np.min(data))
+    
+    data = result * 65535
+    
+    print(np.shape(data))
+    print(np.min(data), np.max(data))
+    
+    data = data.astype(np.int32)
+
+    save_name =  "./sample/excel/example_1/excel.png"
+    save_option = {
+        "file_name": save_name,
+        "dtype": np.uint16,
+        "start_pixel": 0,
+        "end_pixel": 65535
+    }
+    save_image(data, save_option)
+    
+    pass
+
+
+def test2():
+    ss = "()))))))))))))))))))))))()()))()))))))))()))))))()))()))))(()))))))))))))()))))))(()))))))))()()))))))))))))()))))(())()))))))(()))))()))))))()))()())))())))))))))))()))())(()()())()()())))))()))))())()))()))))))))))))))()())))()))))()))))))()))())()))())))(()))()))))))))())))())))(())()))))()((()))))))((((()())())())(())))))())())))))))())))))()(()))))()))))())))))()())())()))()))))))))()))))))))))()))))())))))(((()))))()))((())))())))))))())))()()())())))))())))())())))))(())())))))))())))()()))))))))))))(())())())))((()))))))(())))()())))()))))(())))(())))))))))))))(())))(())()))))(()))())())))))))()())(()(())())))))))))))))))))))))))((()())))())))())))((()())))()))())()))))())()())))))))))))(()))))))))))))))()))))))()))))))))))))))))(()(()))(()))()))))))()))()()))))))))))()))())()))))())))()()()))()))))(())))))))))))))()()))))(())))()))))))()))()())()))())()())())))()()(()())))))()())))))))())))())))(())))())))))))()))))))))()((()(())))))))))(())))())))())))))))))()())))()))))))))("
+    #ss = ")))()()()())())())))))())))))))())()))()()()))))))"
+    #ss = "(()()))"
+    
+    left = 0
+    right = 0 
+    for s in ss:
+        if s == "(":
+            left += 1
+        else:
+            right += 1
+    
+    result = abs(left-right)
+    
+    if ss[-1] == '(':
+        result += 2
+    
+    print(result)
+
+def test4_1():
+    pass
+
+def test4():
+    #spin = ["1112","1111","1211","1111"]
+    #spin = ["137","364","115","724"]
+    #spin = ["11121","11111","11211","11111"]
+    #spin = ["24412","56316","66666","45625"]
+    spin = ["281868247265686571829977999522","611464285871136563343229916655","716739845311113736768779647392","779122814312329463718383927626","571573431548647653632439431183","547362375338962625957869719518","539263489892486347713288936885","417131347396232733384379841536"]
+    
+    #make
+    arr = []
+    for s in spin:
+        arr.append([int(char) for char in s])
+
+    s = 0
+    
+    for i in range(len(spin[0])):
+        if len(arr[0]) == 0:
+            break
+        compare = -1
+        for a in arr:
+            val = max(a)
+            a.remove(val)
+            compare = max(compare, val)
+            #print(a)
+        print("--")
+        s += compare
+        print(i, arr, compare, s)
+    print(s)
+    pass
+
+def test3():
+    numbers = [1,1,1,2]
+    k = 1
+    result = countPairs(numbers,k)
+    print(result)
+    
+def search(arr, score, start, end):
+    if end < start:
+        return None
+
+    
+    mid = (start+end) // 2
+    if len(arr) < mid:
+        mid = mid - 1
+    
+    print(mid, start,end, arr)
+        
+    if [mid] == score:
+        return mid
+    elif arr[mid] > score:
+        return search(arr, score, start, mid-1)
+    else:
+        return search(arr, score, mid+1, end)
+
+
+def countPairs(numbers, k):
+    cnt = 0
+    pairs = list(set(numbers))
+    pairs.sort()
+
+    i = 0
+    for v1 in pairs[:-1]:
+        if search(pairs[i:], v1+k, pairs[i], pairs[-1]):
+            cnt += 1
+        i += 1
+
+    return cnt
+    
 if __name__ == '__main__':
     # cv_imread_16bit_3channel()
     # opencv_remap_test()
@@ -842,5 +973,7 @@ if __name__ == '__main__':
     # container_run()
     # container_mix_data()
     # crop_test()
-    image_24_to_16()
+    # image_24_to_16()
+    # xray_excel()
+    # test3()
     pass

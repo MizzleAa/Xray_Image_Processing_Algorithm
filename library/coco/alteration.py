@@ -17,10 +17,10 @@ def append_grouping():
         
     """
     grouping = AppendGrouping()
-    folder = "crop"
+    folder = "group_before"
     
-    origin_path = f"./sample/xray/example_10/object/{folder}"
-    save_path = f"./sample/xray/example_10/object/append_{folder}"
+    origin_path = f"./sample/xray/example_10/background/{folder}"
+    save_path = f"./sample/xray/example_10/background/append_{folder}"
 
     # folder = "synthesis"
     # folder = "multi_synthesis_20211130_2"

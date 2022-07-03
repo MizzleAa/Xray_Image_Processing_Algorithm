@@ -13,13 +13,126 @@ def xray_to_color_make():
     }
     xray_to_color(options)
 
+
+@dec_func_start_end
+def image_16bit_to_8bit_make():
+    origin_path = "E:/police/운동화/16bit"
+    save_path = "E:/police/운동화/8bit"
+    
+    # origin_path = "./sample/xray/example_10/object/crop"
+    # save_path = "./sample/xray/example_10/object/16bit"
+
+    dir_list_options = {
+        "dir_path": origin_path
+    }
+    
+    fulls, _, _ = load_dir_list(dir_list_options)
+    
+    make_dir(f"{save_path}",{"is_remove":False})
+    
+    progress = Progress(max_num=len(fulls),work_name=__name__)
+    
+    for full in fulls:
+        #progress.set_work_name(f" = {full}\n")
+        progress.update()
+
+        options = {
+            "ends_with": (".jpg", ".png"),
+            "file_path": f"{full}/image"
+        }
+        
+        _, paths, names = load_file_list(options)
+        
+        for path, name in zip(paths, names):
+            object = path.split("/")[-2]
+            
+            image_options = {
+                "file_name": f"{path}/{name}",
+                "dtype": np.uint16
+            }
+            data = load_image(image_options)
+            #color_to_gray = image_color_to_gray(data)
+            #data= image_8bit_to_16bit(data)
+            data = data // 255
+            # print("\n",np.shape(data), data.dtype , np.min(data), np.max(data))
+
+            file_name = name.split(".")[0]
+            make_dir(f"{save_path}/{object}/image")
+    
+            save_options = {
+                "file_name": f"{save_path}/{object}/image/{file_name}.png",
+                "dtype": np.uint8,
+                "start_pixel" : 0,
+                "end_pixel" : 255
+            }
+            # print(save_options)
+            # save_image(data, save_options)
+            cv_save_image(data, save_options)
+
+
 @dec_func_start_end
 def image_8bit_to_16bit_make():
+    # origin_path = "E:/police/구두/8bit"
+    # save_path = "E:/police/구두/16bit"
+    
+    # origin_path = "./sample/xray/example_10/object/crop"
+    # save_path = "./sample/xray/example_10/object/16bit"
+
+    dir_list_options = {
+        "dir_path": origin_path
+    }
+    
+    fulls, _, _ = load_dir_list(dir_list_options)
+    
+    make_dir(f"{save_path}",{"is_remove":False})
+    
+    progress = Progress(max_num=len(fulls),work_name=__name__)
+    
+    for full in fulls:
+        #progress.set_work_name(f" = {full}\n")
+        progress.update()
+
+        options = {
+            "ends_with": (".jpg", ".png"),
+            "file_path": f"{full}/image"
+        }
+        
+        _, paths, names = load_file_list(options)
+        
+        for path, name in zip(paths, names):
+            object = path.split("/")[-2]
+            
+            image_options = {
+                "file_name": f"{path}/{name}",
+                "dtype": np.uint8
+            }
+            data = load_image(image_options)
+            #color_to_gray = image_color_to_gray(data)
+            #data= image_8bit_to_16bit(data)
+            
+            # print("\n",np.shape(data), data.dtype , np.min(data), np.max(data))
+
+            file_name = name.split(".")[0]
+            make_dir(f"{save_path}/{object}/image")
+    
+            save_options = {
+                "file_name": f"{save_path}/{object}/image/{file_name}.png",
+                "dtype": np.uint16,
+                "start_pixel" : 0,
+                "end_pixel" : 65535
+            }
+            # print(save_options)
+            # save_image(data, save_options)
+            cv_save_image(data, save_options)
+
+
+@dec_func_start_end
+def image_color_to_gray_make():
     # origin_path = "F://custom/_source_/origin/xray_origin"
     # save_path = "F://custom/_source_/origin/xray_origin_gray"
     
-    origin_path = "./sample/xray/example_10/convert"
-    save_path = "./sample/xray/example_10/result"
+    origin_path = "./sample/xray/example_10/background/신항2센터/origin"
+    save_path = "./sample/xray/example_10/background/신항2센터/gray"
 
     dir_list_options = {
         "dir_path": origin_path
@@ -51,17 +164,22 @@ def image_8bit_to_16bit_make():
             }
             data = load_image(image_options)
             color_to_gray = image_color_to_gray(data)
+            #data= image_8bit_to_16bit(data)
             
+            # print("\n",np.shape(data), data.dtype , np.min(data), np.max(data))
+
             file_name = name.split(".")[0]
             make_dir(f"{save_path}/{object}/image")
     
             save_options = {
-                "file_name": f"{save_path}/{object}/image/{file_name}.png",
+                "file_name": f"{save_path}/{object}/image/{file_name}.jpg",
                 "dtype": np.uint8,
                 "start_pixel" : 0,
                 "end_pixel" : 255
             }
-            save_image(color_to_gray, save_options)
+            # print(save_options)
+            # save_image(data, save_options)
+            cv_save_image(color_to_gray, save_options)
             
 def xray_to_png(options={}):
     '''
@@ -125,7 +243,8 @@ def image_color_to_16bit(data):
     return result
 
 def image_8bit_to_16bit(data):
-    data = np.mean(data, axis=2)
+    #data = np.mean(data, axis=2)
+    data = data.astype(np.uint16)
     data = data * 255
     return data
 

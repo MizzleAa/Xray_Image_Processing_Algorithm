@@ -206,6 +206,7 @@ class Bone:
         }
         # data = data/np.max(data)*options["end_pixel"]
         # save_image(data, save_image_options)
+        
         cv_save_image(data,save_image_options)
         
         return data

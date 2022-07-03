@@ -75,7 +75,13 @@ def main():
 
     # smith xray to gray
     # image 8bit(color) 16bit로 변환
+    # image_color_to_gray_make()
+    
+    # 8bit to 16bit
     # image_8bit_to_16bit_make()
+
+    # 16bit to 8bit
+    image_16bit_to_8bit_make()
     
     pass
 
