@@ -17,7 +17,7 @@ from library.images.blur import *
 def main():
     
     # histogram 평횔비 
-    #histogram_make()
+    # histogram_make()
     
     # window level 조절
     # windowlevel_make()
@@ -81,7 +81,7 @@ def main():
     # image_8bit_to_16bit_make()
 
     # 16bit to 8bit
-    image_16bit_to_8bit_make()
+    # image_16bit_to_8bit_make()
     
     pass
 
