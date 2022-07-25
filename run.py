@@ -12,6 +12,7 @@ from library.images.backgroundfix import *
 from library.images.convert import *
 from library.images.windowlevel import *
 from library.images.blur import *
+from library.images.crop import *
 #from library.images.histogram import *
 
 def main():
@@ -83,6 +84,8 @@ def main():
     # 16bit to 8bit
     # image_16bit_to_8bit_make()
     
+    # image crop
+    # image_crop_make()
     pass
 
 if __name__ == '__main__':

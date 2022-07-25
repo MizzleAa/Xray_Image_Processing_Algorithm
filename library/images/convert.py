@@ -16,8 +16,8 @@ def xray_to_color_make():
 
 @dec_func_start_end
 def image_16bit_to_8bit_make():
-    origin_path = "E:/police/운동화/16bit"
-    save_path = "E:/police/운동화/8bit"
+    origin_path = "E:/police/2차/땅콩버터/16bit"
+    save_path = "E:/police/2차/땅콩버터/8bit"
     
     # origin_path = "./sample/xray/example_10/object/crop"
     # save_path = "./sample/xray/example_10/object/16bit"
@@ -75,8 +75,8 @@ def image_8bit_to_16bit_make():
     # origin_path = "E:/police/구두/8bit"
     # save_path = "E:/police/구두/16bit"
     
-    # origin_path = "./sample/xray/example_10/object/crop"
-    # save_path = "./sample/xray/example_10/object/16bit"
+    origin_path = "./sample/xray/example_15/gray"
+    save_path = "./sample/xray/example_15/16bit"
 
     dir_list_options = {
         "dir_path": origin_path
@@ -108,7 +108,7 @@ def image_8bit_to_16bit_make():
             }
             data = load_image(image_options)
             #color_to_gray = image_color_to_gray(data)
-            #data= image_8bit_to_16bit(data)
+            data= image_8bit_to_16bit(data)
             
             # print("\n",np.shape(data), data.dtype , np.min(data), np.max(data))
 
@@ -131,8 +131,11 @@ def image_color_to_gray_make():
     # origin_path = "F://custom/_source_/origin/xray_origin"
     # save_path = "F://custom/_source_/origin/xray_origin_gray"
     
-    origin_path = "./sample/xray/example_10/background/신항2센터/origin"
-    save_path = "./sample/xray/example_10/background/신항2센터/gray"
+    # origin_path = "./sample/xray/example_10/background/신항2센터/origin"
+    # save_path = "./sample/xray/example_10/background/신항2센터/gray"
+
+    origin_path = "./sample/xray/example_15/origin"
+    save_path = "./sample/xray/example_15/gray"
 
     dir_list_options = {
         "dir_path": origin_path
