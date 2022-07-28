@@ -862,6 +862,115 @@ def xray_excel():
     pass
 
 
+def split_dataset():
+    name = "test"
+    image_path = "E:/sample/xray/example_16/ETRI/origin/image"
+    save_path = f"E:/sample/xray/example_16/ETRI/origin/{name}/image"
+    
+    make_dir(save_path)
+    
+    load_path = "E:/sample/xray/example_16/ETRI/origin/json"
+    file_name = f"{name}.json"
+    json_data = load_json(load_path, file_name)
+    images = json_data["images"]
+    
+    for image in images:
+        try:
+            origin_image_file = f"{image_path}/{image['file_name']}"
+            copy_image_file = f"{save_path}/{image['file_name']}"
+            shutil.copy(origin_image_file,copy_image_file)
+        except Exception as e:
+            pass
+    pass
+
+def split_top_side():
+    name = "train"
+    image_path = f"E:/sample/xray/example_16/ETRI/split/{name}/origin/image"
+
+    save_top_path = f"E:/sample/xray/example_16/ETRI/split/{name}/TOP_PNG/image"
+    make_dir(save_top_path)
+
+    save_side_path = f"E:/sample/xray/example_16/ETRI/split/{name}/SIDE_PNG/image"
+    make_dir(save_side_path)
+    
+    load_path = "E:/sample/xray/example_16/ETRI/origin/json"
+    file_name = f"{name}.json"
+    json_data = load_json(load_path, file_name)
+    
+    info = json_data["info"]
+    images = json_data["images"]
+    categories = json_data["categories"]
+    annotations = json_data["annotations"]
+    
+    top_json = {
+        "info":info,
+        "images":[],
+        "categories":categories,
+        "annotations":[]
+    }
+    side_json = {
+        "info":info,
+        "images":[],
+        "categories":categories,
+        "annotations":[]
+    }
+    
+    for image in images:
+        origin_image_file = f"{image_path}/{image['file_name']}"
+        copy_image = copy.copy(image)
+        if image["scan_mode"] == "SIDE":
+            copy_image_file = f"{save_side_path}/{image['file_name'][:-4]}.png"
+            copy_image["file_name"] = f"{image['file_name'][:-4]}.png"
+            side_json["images"].append(copy_image)
+        else:
+            copy_image_file = f"{save_top_path}/{image['file_name'][:-4]}.png"
+            copy_image["file_name"] = f"{image['file_name'][:-4]}.png"
+            top_json["images"].append(copy_image)
+        
+        #shutil.copy(origin_image_file,copy_image_file)
+        data = load_image(options={
+            "file_name":origin_image_file,
+            "dtype":np.uint16
+        })
+        save_image(data, options={
+            "file_name":copy_image_file,
+            "dtype":np.uint16,
+            "start_pixel":0,
+            "end_pixel":65535
+        })
+        for ann_idx, annotation in enumerate(annotations):
+            if annotation["image_id"] == image["id"]:
+                copy_annotation = copy.copy(annotation)
+            
+                if image["scan_mode"] == "SIDE":
+                    side_json["annotations"].append(copy_annotation)
+                else: #Top
+                    top_json["annotations"].append(copy_annotation)
+
+                del annotations[ann_idx]
+    
+    save_top_json_path = f"E:/sample/xray/example_16/ETRI/split/{name}/TOP_PNG/json"
+    make_dir(save_top_json_path)
+
+    save_side_json_path = f"E:/sample/xray/example_16/ETRI/split/{name}/SIDE_PNG/json"
+    make_dir(save_top_json_path)
+
+    save_json(top_json,save_top_json_path,"data.json")
+    save_json(side_json,save_side_json_path,"data.json")
+
+
+def test4():
+    annotations = [
+        {"image_id":1, "data":1},
+        {"image_id":2, "data":1},
+        {"image_id":3, "data":1},
+        {"image_id":4, "data":1}
+    ]
+    
+    data = [annotation["image_id"] for annotation in annotations]    
+    print(data)
+    pass
+
 if __name__ == '__main__':
     # cv_imread_16bit_3channel()
     # opencv_remap_test()
@@ -886,4 +995,8 @@ if __name__ == '__main__':
     # image_24_to_16()
     # xray_excel()
     # test3()
+    # split_dataset()
+    # test_del()
+    split_top_side()
+    # test4()
     pass
